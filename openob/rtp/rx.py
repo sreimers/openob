@@ -5,7 +5,7 @@ import gst
 import re
 from colorama import Fore, Back, Style
 class RTPReceiver:
-  def __init__(self, caps='', audio_output='alsa', audio_device='hw:0', base_port=3000, encoding='celt', bitrate=96, jitter_buffer=150, jack_name='openob_rx'):
+  def __init__(self, caps='', audio_output='alsa', audio_device='hw:0', base_port=3000, ipv6=False, encoding='celt', bitrate=96, jitter_buffer=150, jack_name='openob_rx'):
     """Sets up a new RTP receiver"""
     self.started = False
     self.pipeline = gst.Pipeline("rx")
@@ -59,8 +59,13 @@ class RTPReceiver:
     self.udpsrc_rtcpin.set_property('port', base_port+1)
     # And where we'll send RTCP Sender Reports (a black hole - we assume we can't contact the sender, and this is optional)
     self.udpsink_rtcpout = gst.element_factory_make('udpsink')
-    self.udpsink_rtcpout.set_property('host', "0.0.0.0")
     self.udpsink_rtcpout.set_property('port', base_port+2)
+    if (ipv6):
+        self.udpsrc_rtpin.set_property('multicast-group', "::")
+        self.udpsrc_rtcpin.set_property('multicast-group', "::")
+        self.udpsink_rtcpout.set_property('host', "::")
+    else:
+        self.udpsink_rtcpout.set_property('host', "0.0.0.0")
 
     # Our level monitor, also used for continuous audio
     self.level = gst.element_factory_make("level")

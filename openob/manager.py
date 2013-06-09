@@ -75,6 +75,7 @@ class Manager:
                 print("    Waiting half a second and attempting to reconfigure myself." + Fore.RESET + Back.RESET)
                 time.sleep(0.5)
               port = int(config.get(link_key+"port"))
+              ipv6 = int(config.get(link_key+"ipv6"))
               caps = config.get(link_key+"caps")
               jitter_buffer = int(config.get(link_key+"jitter_buffer"))
               encoding = config.get(link_key+"encoding")
@@ -92,7 +93,7 @@ class Manager:
               time.sleep(0.5)
               #raise
           # Okay, we can now configure ourself
-          receiver = RTPReceiver(audio_output=opts.audio_output, audio_device=opts.device, base_port=port, encoding=encoding, caps=caps, bitrate=bitrate, jitter_buffer=jitter_buffer, jack_name=("openob_tx_%s" % opts.link_name) )
+          receiver = RTPReceiver(audio_output=opts.audio_output, audio_device=opts.device, base_port=port, ipv6=ipv6, encoding=encoding, caps=caps, bitrate=bitrate, jitter_buffer=jitter_buffer, jack_name=("openob_tx_%s" % opts.link_name) )
           try:
             receiver.run()
             receiver.loop()
